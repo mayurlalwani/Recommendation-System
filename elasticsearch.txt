@@ -1,0 +1,132 @@
+
+#Get all Indexes
+GET /_cat/indices?v
+GET question/_search/
+{
+  "size" : 15
+}
+GET question
+DELETE question
+
+
+
+#Index Mapping
+PUT question
+{
+  "mappings" : {
+        "data" : {
+            "properties" : {
+
+              "@Id" : {
+                "type" : "integer"
+              },
+
+
+                "@PostTypeId" : {
+                    "type" : "integer"
+                },
+
+                "@AcceptedAnswerId" : {
+                    "type" : "integer"
+                },
+
+                "@Body" : {
+                    "type" : "text",
+                    "similarity" : "BM25"
+                },
+
+                "answers" :{
+                  "type" : "text",
+                  "similarity" : "BM25"
+                }
+
+
+
+            }
+        }
+  }
+}
+
+
+
+#Queries
+
+GET question/_search
+{
+  "_source": ["@Body"],
+  "query": {
+    "bool": {
+      "must": [
+
+        {
+          "match" : {"@Body" : "bayesian networks"}
+        },
+        {
+          "match" : {"@PostTypeId": "1"}
+        }
+        ]
+    }
+  }
+}
+
+GET question/_search
+{
+  "size": "2",
+  "_source": ["@Id", "@Body"],
+  "query": {
+    "match": {
+      "@ParentId": "1"
+    }
+  }
+}
+
+
+
+#Add a new property to an existing index
+PUT question/_mapping/data
+{
+  "properties": {
+    "@ParentId" :{
+      "type" : "integer"
+
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
